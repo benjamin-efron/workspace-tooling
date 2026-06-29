@@ -8,6 +8,7 @@ Portable macOS workspace configuration. Each top-level directory is a tool with 
 |------|-------------|
 | [AeroSpace](https://github.com/nikitabobko/AeroSpace) | Tiling WM — keybindings, workspace layout, window rules |
 | [Hammerspoon](https://www.hammerspoon.org) | Automation — window flash, workspace badge, monitor switch feedback |
+| [tmux](https://github.com/tmux/tmux) | Terminal multiplexer — vim-style navigation, pane resizing, TPM plugins |
 
 ## Setup on a new machine
 

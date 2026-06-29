@@ -3,7 +3,7 @@
 # Edit aerospace/internal/config/aerospace.toml in the workspace-tooling repo instead.
 #
 # All bindings are in main mode using cmd-alt prefix.
-# q/w/e/r = monitor 1 workspaces, a/s/d/f = monitor 2 workspaces.
+# q/w/e/r/t = monitor 1 workspaces, a/s/d/f/g = monitor 2 workspaces.
 
 start-at-login = true
 
@@ -33,18 +33,20 @@ outer.right = 0
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Workspace → monitor assignments
-# q/w/e/r live on monitor 1 (LG HDR WFHD (2))
-# a/s/d/f live on monitor 2 (LG HDR WFHD (1))
+# q/w/e/r/t live on monitor 1 (LG HDR WFHD (2))
+# a/s/d/f/g live on monitor 2 (LG HDR WFHD (1))
 # ─────────────────────────────────────────────────────────────────────────────
 [workspace-to-monitor-force-assignment]
 q = 1
 w = 1
 e = 1
 r = 1
+t = 1
 a = 2
 s = 2
 d = 2
 f = 2
+g = 2
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Main mode — all bindings
@@ -70,28 +72,32 @@ cmd-alt-shift-up    = 'resize height +50'
 cmd-alt-shift-down  = 'resize height -50'
 
 # --- Workspace cycling on focused monitor -----------------------------------
-cmd-alt-left  = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py prev q w e r a s d f'
-cmd-alt-right = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py next q w e r a s d f'
+cmd-alt-left  = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py prev q w e r t a s d f g'
+cmd-alt-right = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py next q w e r t a s d f g'
 
 # --- Jump to workspace ------------------------------------------------------
 cmd-alt-q = 'workspace q'
 cmd-alt-w = 'workspace w'
 cmd-alt-e = 'workspace e'
 cmd-alt-r = 'workspace r'
+cmd-alt-t = 'workspace t'
 cmd-alt-a = 'workspace a'
 cmd-alt-s = 'workspace s'
 cmd-alt-d = 'workspace d'
 cmd-alt-f = 'workspace f'
+cmd-alt-g = 'workspace g'
 
 # --- Send window to workspace -----------------------------------------------
 cmd-alt-shift-q = 'move-node-to-workspace q'
 cmd-alt-shift-w = 'move-node-to-workspace w'
 cmd-alt-shift-e = 'move-node-to-workspace e'
 cmd-alt-shift-r = 'move-node-to-workspace r'
+cmd-alt-shift-t = 'move-node-to-workspace t'
 cmd-alt-shift-a = 'move-node-to-workspace a'
 cmd-alt-shift-s = 'move-node-to-workspace s'
 cmd-alt-shift-d = 'move-node-to-workspace d'
 cmd-alt-shift-f = 'move-node-to-workspace f'
+cmd-alt-shift-g = 'move-node-to-workspace g'
 
 # --- Layout -----------------------------------------------------------------
 cmd-alt-slash = 'layout tiles horizontal vertical'
@@ -101,7 +107,4 @@ cmd-alt-y     = 'layout floating tiling'
 # --- Monitor ----------------------------------------------------------------
 cmd-ctrl-alt-shift-w = ['focus-monitor --wrap-around next', 'exec-and-forget $HOME/.config/aerospace/internal/monitor-switch.py']
 
-cmd-ctrl-alt-shift-z = 'fullscreen'
-
-# --- Debug ------------------------------------------------------------------
-cmd-ctrl-alt-shift-d = 'exec-and-forget /bin/bash -c "env | sort > /tmp/aero-env.txt"'
+cmd-alt-z = 'fullscreen'
