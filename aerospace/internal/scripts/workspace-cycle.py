@@ -1,0 +1,31 @@
+#!/usr/bin/python3
+"""Cycle to the next or previous workspace on the focused monitor."""
+import subprocess
+import sys
+
+direction = sys.argv[1]  # 'next' or 'prev'
+
+current = subprocess.run(
+    ['/opt/homebrew/bin/aerospace','list-workspaces', '--focused'],
+    capture_output=True, text=True
+).stdout.strip()
+
+workspaces = subprocess.run(
+    ['/opt/homebrew/bin/aerospace','list-workspaces', '--monitor', 'focused'],
+    capture_output=True, text=True
+).stdout.strip().splitlines()
+
+if not workspaces:
+    sys.exit(0)
+
+try:
+    idx = workspaces.index(current)
+except ValueError:
+    idx = 0
+
+if direction == 'next':
+    target = workspaces[(idx + 1) % len(workspaces)]
+else:
+    target = workspaces[(idx - 1) % len(workspaces)]
+
+subprocess.run(['/opt/homebrew/bin/aerospace','workspace', target])
