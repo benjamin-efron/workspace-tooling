@@ -63,6 +63,12 @@ cmd-alt-shift-j = 'move down'
 cmd-alt-shift-k = 'move up'
 cmd-alt-shift-l = 'move right'
 
+# --- Resize window ----------------------------------------------------------
+cmd-alt-shift-left  = 'resize width -50'
+cmd-alt-shift-right = 'resize width +50'
+cmd-alt-shift-up    = 'resize height +50'
+cmd-alt-shift-down  = 'resize height -50'
+
 # --- Workspace cycling on focused monitor -----------------------------------
 cmd-alt-left  = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py prev q w e r a s d f'
 cmd-alt-right = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py next q w e r a s d f'
