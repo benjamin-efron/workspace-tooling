@@ -19,6 +19,10 @@ on-focus-changed = ['exec-and-forget $HOME/.config/aerospace/internal/focus-chan
 # exec-on-workspace-change uses array exec (no shell expansion), so wrap in sh -c.
 exec-on-workspace-change = ['/bin/sh', '-c', '$HOME/.config/aerospace/internal/workspace-changed.py']
 
+[[on-window-detected]]
+if.app-id = 'us.zoom.xos'
+run = 'layout floating'
+
 [gaps]
 inner.horizontal = 0
 inner.vertical = 0
@@ -60,8 +64,8 @@ cmd-alt-shift-k = 'move up'
 cmd-alt-shift-l = 'move right'
 
 # --- Workspace cycling on focused monitor -----------------------------------
-cmd-alt-left  = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py prev'
-cmd-alt-right = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py next'
+cmd-alt-left  = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py prev q w e r a s d f'
+cmd-alt-right = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py next q w e r a s d f'
 
 # --- Jump to workspace ------------------------------------------------------
 cmd-alt-q = 'workspace q'
@@ -86,6 +90,7 @@ cmd-alt-shift-f = 'move-node-to-workspace f'
 # --- Layout -----------------------------------------------------------------
 cmd-alt-slash = 'layout tiles horizontal vertical'
 cmd-alt-comma = 'layout accordion horizontal vertical'
+cmd-alt-y     = 'layout floating tiling'
 
 # --- Monitor ----------------------------------------------------------------
 cmd-ctrl-alt-shift-w = ['focus-monitor --wrap-around next', 'exec-and-forget $HOME/.config/aerospace/internal/monitor-switch.py']
