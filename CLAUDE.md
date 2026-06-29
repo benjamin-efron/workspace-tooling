@@ -23,12 +23,12 @@ Each tool follows this layout:
 ```
 <tool>/
   install.py          # idempotent setup script
-  internal/           # everything the tool needs at runtime
+  _mine/           # everything the tool needs at runtime
     config/           # config files (if the tool needs a separate config location)
     scripts/          # scripts called by the tool at runtime
 ```
 
-Not all tools need both `config/` and `scripts/` — use whatever structure makes sense. The `internal/` directory is fully replaced on each install.
+Not all tools need both `config/` and `scripts/` — use whatever structure makes sense. The `_mine/` directory is fully replaced on each install.
 
 ## Adding a new tool
 
@@ -38,7 +38,7 @@ Not all tools need both `config/` and `scripts/` — use whatever structure make
    - Copy config files to their OS-expected locations, substituting `$HOME` with `str(Path.home())` if the tool doesn't expand env vars at runtime.
    - Fully replace any managed directories: `shutil.rmtree(dst)` then `shutil.copytree(src, dst)`.
    - Print any one-time manual steps the user needs to take.
-3. Add `internal/` with the tool's config and/or scripts.
+3. Add `_mine/` with the tool's config and/or scripts.
 4. Add the tool to the README table.
 
 ## Tools
@@ -47,12 +47,23 @@ Not all tools need both `config/` and `scripts/` — use whatever structure make
 
 AeroSpace is a tiling WM that launches as a GUI app at login. Its `exec-and-forget` directive execs scripts directly without a shell, so env vars are not available. `install.py` substitutes `$HOME` with the absolute home path before writing `aerospace.toml`.
 
-Runtime scripts in `aerospace/internal/scripts/` are called by AeroSpace bindings. They use full binary paths (`/opt/homebrew/bin/hs`, `/opt/homebrew/bin/aerospace`) since Homebrew's PATH is not available in AeroSpace's runtime environment.
+Runtime scripts in `aerospace/_mine/scripts/` are called by AeroSpace bindings. They use full binary paths (`/opt/homebrew/bin/hs`, `/opt/homebrew/bin/aerospace`) since Homebrew's PATH is not available in AeroSpace's runtime environment.
 
 ### hammerspoon
 
-Hammerspoon manages visual feedback triggered by AeroSpace events: window border flash on focus change, workspace badge on workspace switch, and mouse warp on monitor switch. `install.py` only manages `~/.hammerspoon/internal/` — it never touches `init.lua`, which varies per machine. Instead it prints a snippet for the user to add manually once.
+Hammerspoon manages visual feedback triggered by AeroSpace events: window border flash on focus change, workspace badge on workspace switch, and mouse warp on monitor switch. `install.py` only manages `~/.hammerspoon/_mine/` — it never touches `init.lua`, which varies per machine. Instead it prints a snippet for the user to add manually once.
 
 ### tmux
 
 Standard tmux config. No path substitution needed. After install, run `tmux source ~/.tmux.conf`. Plugins are managed by TPM — if not yet installed, bootstrap instructions are printed by `install.py`.
+
+### claude
+
+Claude Code hooks that fire on every `Stop` and `Notification` event. `install.py` copies `_mine/` to `~/.claude/_mine/` and prints the JSON snippet to add to `~/.claude/settings.json` — it never touches that file directly since it contains other per-machine settings.
+
+`notify.py` resolves which AeroSpace workspace the Claude session is on via:
+1. `$TMUX_PANE` → tmux session → `#{client_tty}` (the pty device for the Ghostty window displaying this session)
+2. Ghostty AppleScript (`tty` property on the `terminal` element) to map the pty device to a window title
+3. `aerospace list-windows --workspace all --json` to map the window title to a workspace
+
+The workspace is written along with the tmux pane ID to `~/.hammerspoon/notifications/<session_id>.json`. Hammerspoon's pathwatcher picks this up and shows the notification HUD.

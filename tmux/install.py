@@ -18,7 +18,7 @@ def check_prerequisites():
 check_prerequisites()
 
 dst = Path.home() / ".tmux.conf"
-shutil.copy(TOOL / "internal" / "tmux.conf", dst)
+shutil.copy(TOOL / "_mine" / "tmux.conf", dst)
 print(f"wrote    {dst}")
 print()
 print("If TPM is not installed, bootstrap it:")

@@ -1,6 +1,6 @@
 # AeroSpace configuration
 # ~/.config/aerospace/aerospace.toml — managed by aerospace/install.py, do not edit directly.
-# Edit aerospace/internal/config/aerospace.toml in the workspace-tooling repo instead.
+# Edit aerospace/_mine/config/aerospace.toml in the workspace-tooling repo instead.
 #
 # All bindings are in main mode using cmd-alt prefix.
 # q/w/e/r/t = monitor 1 workspaces, a/s/d/f/g = monitor 2 workspaces.
@@ -14,10 +14,10 @@ default-root-container-layout = 'tiles'
 # 'auto' = horizontal on wide displays, vertical on tall ones.
 default-root-container-orientation = 'auto'
 
-on-focus-changed = ['exec-and-forget $HOME/.config/aerospace/internal/focus-changed.py']
+on-focus-changed = ['exec-and-forget $HOME/.config/aerospace/_mine/focus-changed.py']
 
 # exec-on-workspace-change uses array exec (no shell expansion), so wrap in sh -c.
-exec-on-workspace-change = ['/bin/sh', '-c', '$HOME/.config/aerospace/internal/workspace-changed.py']
+exec-on-workspace-change = ['/bin/sh', '-c', '$HOME/.config/aerospace/_mine/workspace-changed.py']
 
 [[on-window-detected]]
 if.app-id = 'us.zoom.xos'
@@ -72,8 +72,8 @@ cmd-alt-shift-up    = 'resize height +50'
 cmd-alt-shift-down  = 'resize height -50'
 
 # --- Workspace cycling on focused monitor -----------------------------------
-cmd-alt-left  = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py prev q w e r t a s d f g'
-cmd-alt-right = 'exec-and-forget $HOME/.config/aerospace/internal/workspace-cycle.py next q w e r t a s d f g'
+cmd-alt-left  = 'exec-and-forget $HOME/.config/aerospace/_mine/workspace-cycle.py prev q w e r t a s d f g'
+cmd-alt-right = 'exec-and-forget $HOME/.config/aerospace/_mine/workspace-cycle.py next q w e r t a s d f g'
 
 # --- Jump to workspace ------------------------------------------------------
 cmd-alt-q = 'workspace q'
@@ -105,6 +105,6 @@ cmd-alt-comma = 'layout accordion horizontal vertical'
 cmd-alt-y     = 'layout floating tiling'
 
 # --- Monitor ----------------------------------------------------------------
-cmd-ctrl-alt-shift-w = ['focus-monitor --wrap-around next', 'exec-and-forget $HOME/.config/aerospace/internal/monitor-switch.py']
+cmd-ctrl-alt-shift-w = ['focus-monitor --wrap-around next', 'exec-and-forget $HOME/.config/aerospace/_mine/monitor-switch.py']
 
 cmd-alt-z = 'fullscreen'

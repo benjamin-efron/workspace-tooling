@@ -20,12 +20,17 @@ check_prerequisites()
 
 CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 
-toml = (TOOL / "internal" / "config" / "aerospace.toml").read_text().replace("$HOME", str(Path.home()))
+toml = (TOOL / "_mine" / "config" / "aerospace.toml").read_text().replace("$HOME", str(Path.home()))
 (CONFIG_DIR / "aerospace.toml").write_text(toml)
 print(f"wrote    {CONFIG_DIR / 'aerospace.toml'}")
 
-internal_dst = CONFIG_DIR / "internal"
-if internal_dst.exists():
-    shutil.rmtree(internal_dst)
-shutil.copytree(TOOL / "internal" / "scripts", internal_dst)
-print(f"replaced {internal_dst}/")
+_mine_dst = CONFIG_DIR / "_mine"
+if _mine_dst.exists():
+    shutil.rmtree(_mine_dst)
+shutil.copytree(TOOL / "_mine" / "scripts", _mine_dst)
+print(f"replaced {_mine_dst}/")
+
+old_internal = CONFIG_DIR / "internal"
+if old_internal.exists():
+    shutil.rmtree(old_internal)
+    print(f"removed  {old_internal}/ (stale)")
