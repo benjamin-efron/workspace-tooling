@@ -41,7 +41,9 @@ Not all tools need both `config/` and `scripts/` — use whatever structure make
    - Fully replace any managed directories: `shutil.rmtree(dst)` then `shutil.copytree(src, dst)`.
    - Print any one-time manual steps the user needs to take.
 3. Add `_mine/` with the tool's config and/or scripts.
-4. Add the tool to the README table.
+4. Add the tool to the root README's table and install order.
+5. Add a per-tool `README.md`: dependencies on other tools in this repo, install steps
+   and prerequisites, and common commands.
 
 ## Tools
 
@@ -54,6 +56,8 @@ Runtime scripts in `aerospace/_mine/scripts/` are called by AeroSpace bindings. 
 ### hammerspoon
 
 Hammerspoon manages visual feedback triggered by AeroSpace events: window border flash on focus change, workspace badge on workspace switch, and mouse warp on monitor switch. `install.py` only manages `~/.hammerspoon/_mine/` — it never touches `init.lua`, which varies per machine. Instead it prints a snippet for the user to add manually once.
+
+The monitor mouse-warp (`monitor_switch.lua`'s `MonitorSwitch.onFocus`) is skipped when `hs.mouse.getCurrentScreen()` already equals the target screen — this covers both a mouse-driven monitor switch (clicking a window on the other monitor) and a same-monitor keyboard workspace jump (where the mouse never left that screen to begin with), neither of which should yank the cursor to the corner.
 
 ### tmux
 
