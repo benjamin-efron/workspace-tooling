@@ -16,6 +16,8 @@ Portable macOS workspace configuration. Each top-level directory is a tool. The 
 
 **One-time manual steps are printed, not automated.** When a tool requires a one-time action per machine that can't be scripted safely (e.g. adding a snippet to an unmanaged config file), `install.py` prints clear instructions rather than modifying files it doesn't own.
 
+**Minimize Hammerspoon.** Hammerspoon is unreliable — prefer the `aerospace` CLI and Python for control flow (focus switching, workspace navigation, monitor targeting). Reserve Hammerspoon/Lua for drawing on-screen UI (canvases, overlays) and other tasks only it can do. When Hammerspoon must trigger a focus/workspace change, shell out to `aerospace` (via `hs.task.new`) rather than using Hammerspoon's own window/screen APIs (e.g. `hs.window():focus()`) — mixing the two causes AeroSpace's internal state to fall out of sync with macOS's actual focus, producing flicker/revert bugs. AeroSpace should be the single source of truth for focus and workspace state.
+
 ## Directory structure
 
 Each tool follows this layout:
@@ -61,9 +63,10 @@ Standard tmux config. No path substitution needed. After install, run `tmux sour
 
 Claude Code hooks that fire on every `Stop` and `Notification` event. `install.py` copies `_mine/` to `~/.claude/_mine/` and prints the JSON snippet to add to `~/.claude/settings.json` — it never touches that file directly since it contains other per-machine settings.
 
-`notify.py` resolves which AeroSpace workspace the Claude session is on via:
-1. `$TMUX_PANE` → tmux session → `#{client_tty}` (the pty device for the Ghostty window displaying this session)
-2. Ghostty AppleScript (`tty` property on the `terminal` element) to map the pty device to a window title
-3. `aerospace list-windows --workspace all --json` to map the window title to a workspace
+`notify.py` resolves which AeroSpace workspace and window the Claude session is on via:
+1. `$TMUX_PANE` → tmux session name (`#{session_name}`)
+2. `aerospace list-windows --all --json` to find the Ghostty window whose title equals the session name — this relies on `tmux.conf` setting `set-titles on` / `set-titles-string '#S'`, since Ghostty's AppleScript dictionary has no way to map a pty device to a window (no `tty` property exists on its `terminal` element, despite the name suggesting otherwise).
 
-The workspace is written along with the tmux pane ID to `~/.hammerspoon/notifications/<session_id>.json`. Hammerspoon's pathwatcher picks this up and shows the notification HUD.
+The resolved workspace, window-id, and tmux pane are written to `~/.hammerspoon/notifications/<session_id>.json`. Hammerspoon's pathwatcher picks this up and shows the notification HUD. On selection, `claude_notifications.lua` runs phases assuming the prior phase succeeded regardless of outcome: (1) `aerospace focus --window-id <id>` to pull the correct monitor and workspace into focus (falls back to `aerospace workspace <ws>` if no window-id was resolved), then (2) `tmux switch-client -t <pane>`. Focus is deliberately routed through AeroSpace's own commands rather than `hs.window():focus()` or a redundant `aerospace workspace` call after the window focus — either caused AeroSpace's internal state to desync from macOS's actual focus, producing a flash-then-revert.
+
+`notify.py` also suppresses the notification file write entirely when the resolved workspace matches the currently-focused AeroSpace workspace and tmux reports the pane as both the active window and active pane (`#{window_active}#{pane_active}` == `"11"`) — i.e. the user is already looking at the session.

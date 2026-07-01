@@ -114,14 +114,44 @@ local function hide()
 end
 
 local function navigate(notif)
-    hs.task.new(AEROSPACE, nil, {'workspace', notif.workspace}):start()
+    print('cn navigate: ws=' .. tostring(notif.workspace) .. ' pane=' .. tostring(notif.tmux_pane)
+        .. ' winId=' .. tostring(notif.window_id))
 
-    if notif.tmux_pane ~= '' then
-        hs.timer.doAfter(0.15, function()
-            hs.task.new(TMUX_BIN, nil,
-                {'switch-client', '-t', notif.tmux_pane}):start()
-        end)
+    -- Phase 3: switch to the tmux window (called after phase 1/2 completes).
+    local function phase3()
+        print('cn phase3: tmux switch')
+        if notif.tmux_pane ~= '' then
+            hs.timer.doAfter(0.10, function()
+                hs.task.new(TMUX_BIN, nil,
+                    {'switch-client', '-t', notif.tmux_pane}):start()
+            end)
+        end
     end
+
+    -- Phase 2: navigate to the workspace. Only used as a fallback when no
+    -- window-id was resolved — when phase 1 runs, `focus --window-id` already
+    -- switches to the window's workspace/monitor as a side effect, and issuing
+    -- a redundant `workspace` call after it caused a focus/revert flash.
+    local function phase2()
+        print('cn phase2: aerospace workspace ' .. tostring(notif.workspace))
+        hs.task.new(AEROSPACE, function() phase3() end,
+            {'workspace', notif.workspace}):start()
+    end
+
+    -- Phase 1: focus the monitor by focusing the exact terminal window that fired
+    -- this notification (resolved by notify.py), via AeroSpace's own `focus`
+    -- command so its internal state stays consistent (not hs.window():focus()).
+    local function phase1()
+        if notif.window_id then
+            print('cn phase1: aerospace focus --window-id ' .. tostring(notif.window_id))
+            hs.task.new(AEROSPACE, function() phase3() end,
+                {'focus', '--window-id', tostring(notif.window_id)}):start()
+        else
+            print('cn phase1: no window_id, skipping to phase2')
+            phase2()
+        end
+    end
+    phase1()
 
     -- Clear all notifications for this session and hide
     local sid  = notif.session_id
@@ -182,6 +212,7 @@ function M.addFromFile(path)
         label      = label,
         workspace  = data.workspace or '',
         tmux_pane  = data.tmux_pane or '',
+        window_id  = data.window_id,
     })
     notifications = kept
     selectedIdx   = 1
